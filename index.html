@@ -343,22 +343,26 @@
             text-align: center;
             padding: 20px;
             position: relative;
+            z-index: 250;
         }
 
         #end-screen.win {
             display: flex;
-            overflow: hidden;
         }
 
         #end-screen.win .end-emoji {
             font-size: 6rem;
             animation: trophySpin 2s ease-in-out infinite;
+            position: relative;
+            z-index: 251;
         }
 
         #end-screen.win h2 {
             font-size: 2.5rem;
             color: #ffd700;
             animation: glow 2s ease-in-out infinite;
+            position: relative;
+            z-index: 251;
         }
 
         #end-screen.win .win-subtitle {
@@ -366,6 +370,14 @@
             font-weight: 700;
             color: #ffecb3;
             animation: pulse 1.5s ease-in-out infinite;
+            position: relative;
+            z-index: 251;
+        }
+
+        #end-screen.win p,
+        #end-screen.win .play-again-btn {
+            position: relative;
+            z-index: 251;
         }
 
         @keyframes glow {
@@ -384,6 +396,14 @@
         #end-screen.lose {
             display: flex;
             background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        #end-screen .end-emoji,
+        #end-screen h2,
+        #end-screen p,
+        #end-screen .play-again-btn {
+            position: relative;
+            z-index: 251;
         }
 
         #end-screen .end-emoji {
