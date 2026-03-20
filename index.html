@@ -598,7 +598,7 @@
     <h2 id="end-title"></h2>
     <p class="win-subtitle" id="end-subtitle"></p>
     <p id="end-message"></p>
-    <button class="play-again-btn" onclick="resetGame()">🔄 שחק/י שוב</button>
+    <button class="play-again-btn" id="play-again-btn" onclick="resetGame()">🔄 שחק/י שוב</button>
 </div>
 
 <script>
@@ -794,6 +794,9 @@
         const championTitle = isFemale ? 'אלופה' : 'אלוף';
         const wonText = isChild ? 'ניצחתי' : 'ניצחת';
         const tryAgain = isFemale ? 'נסי שוב' : 'נסה שוב';
+
+        const playAgainText = isFemale ? '🔄 שחקי שוב' : '🔄 שחק שוב';
+        document.getElementById('play-again-btn').textContent = playAgainText;
 
         if (won) {
             document.getElementById('end-emoji').textContent = '🏆';
