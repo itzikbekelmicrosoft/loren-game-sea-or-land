@@ -813,10 +813,12 @@
             spawnConfetti();
         } else {
             document.getElementById('end-emoji').textContent = '😢';
-            document.getElementById('end-title').textContent = '!אוי לא';
+            const loseTitle = isFemale ? 'נפסלת!' : 'נפסלת!';
+            document.getElementById('end-title').textContent = `😢 ${loseTitle}`;
             document.getElementById('end-subtitle').style.display = 'none';
             document.getElementById('end-message').textContent =
                 `${charEmoji} הפסדת בשלב ${currentStage} מתוך ${totalStages}. ${tryAgain}!`;
+            endScreen.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
             endScreen.classList.add('lose');
         }
     }
