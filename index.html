@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>המשחק של לורן בקל - ים יבשה ויבשושה</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* ======================== */
+        /*   CHARACTER SELECT       */
+        /* ======================== */
+        #select-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            gap: 30px;
+        }
+
+        #select-screen h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: bounceIn 0.8s ease;
+        }
+
+        #select-screen p {
+            font-size: 1.4rem;
+            opacity: 0.9;
+        }
+
+        .character-options {
+            display: flex;
+            gap: 40px;
+            margin-top: 10px;
+        }
+
+        .char-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 24px;
+            padding: 30px 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-family: 'Rubik', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .char-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            background: rgba(255,255,255,0.25);
+            border-color: white;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .char-btn .emoji {
+            font-size: 5rem;
+            line-height: 1;
+        }
+
+        /* ======================== */
+        /*   GAME SCREEN            */
+        /* ======================== */
+        #game-screen {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Instruction bar */
+        #instruction-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+            gap: 30px;
+        }
+
+        #instruction-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: pulse 0.5s ease;
+        }
+
+        .info-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 6px 14px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .info-badge .label { opacity: 0.7; font-size: 0.85rem; }
+
+        #timer-display {
+            font-size: 1.6rem;
+            font-weight: 900;
+            min-width: 38px;
+            text-align: center;
+        }
+
+        #timer-display.urgent {
+            color: #ff4757;
+            animation: shake 0.4s ease infinite;
+        }
+
+        /* Timer progress bar */
+        #timer-bar-container {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        #timer-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #f1c40f, #e74c3c);
+            transition: width 0.1s linear;
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* Scene */
+        #scene {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            position: relative;
+        }
+
+        #land-zone {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 35%, #8BC34A 35%, #6da832 60%, #5d9428 100%);
+            position: relative;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+
+        #land-zone:hover {
+            filter: brightness(1.05);
+        }
+
+        /* Land decorations */
+        #land-zone::before {
+            content: '🌳';
+            position: absolute;
+            font-size: 3rem;
+            bottom: 45%;
+            left: 15%;
+        }
+
+        #land-zone::after {
+            content: '🌻🌷';
+            position: absolute;
+            font-size: 1.8rem;
+            bottom: 37%;
+            right: 20%;
+        }
+
+        #sea-zone {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 35%, #2196F3 35%, #1976D2 60%, #1565C0 100%);
+            position: relative;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+
+        #sea-zone:hover {
+            filter: brightness(1.05);
+        }
+
+        /* Wave animation */
+        #sea-zone::before {
+            content: '';
+            position: absolute;
+            top: 33%;
+            left: -10%;
+            right: -10%;
+            height: 30px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 40px,
+                rgba(255,255,255,0.2) 40px,
+                rgba(255,255,255,0.2) 80px
+            );
+            animation: waves 3s linear infinite;
+            border-radius: 50%;
+        }
+
+        #sea-zone::after {
+            content: '🐠 🐟';
+            position: absolute;
+            font-size: 2rem;
+            bottom: 20%;
+            left: 30%;
+            animation: swim 4s ease-in-out infinite;
+        }
+
+        /* Border between zones */
+        #border-zone {
+            position: absolute;
+            left: 50%;
+            top: 35%;
+            bottom: 0;
+            width: 8px;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, transparent, #e8d44d 10%, #d4a017);
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        /* Yabshusha click zone */
+        #yabshusha-zone {
+            position: absolute;
+            left: calc(50% - 60px);
+            top: 35%;
+            bottom: 0;
+            width: 120px;
+            z-index: 9;
+            cursor: pointer;
+        }
+
+        /* Labels */
+        .zone-label {
+            position: absolute;
+            bottom: 10%;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #land-label {
+            left: 20%;
+        }
+
+        #sea-label {
+            right: 15%;
+        }
+
+        /* Character */
+        #character {
+            position: absolute;
+            font-size: 4.5rem;
+            z-index: 50;
+            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.3s ease;
+            filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.3));
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        #character.jump {
+            animation: jump 0.4s ease;
+        }
+
+        /* Feedback overlay */
+        #feedback {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            pointer-events: none;
+        }
+
+        #feedback.correct {
+            display: flex;
+            background: rgba(46, 204, 113, 0.3);
+            animation: flashFeedback 0.6s ease forwards;
+        }
+
+        #feedback.wrong {
+            display: flex;
+            background: rgba(231, 76, 60, 0.3);
+            animation: flashFeedback 0.6s ease forwards;
+        }
+
+        /* ======================== */
+        /*   END SCREENS            */
+        /* ======================== */
+        #end-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 25px;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #end-screen.win {
+            display: flex;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            background-size: 400% 400%;
+            animation: gradientShift 4s ease infinite;
+            overflow: hidden;
+        }
+
+        #end-screen.win::before {
+            content: '✨🏆✨';
+            position: absolute;
+            top: 8%;
+            font-size: 4rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px #ffd700, 0 0 40px #ffa500, 0 0 60px #ff8c00; }
+            50% { text-shadow: 0 0 40px #ffd700, 0 0 80px #ffa500, 0 0 120px #ff8c00; }
+        }
+
+        @keyframes trophySpin {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-10deg); }
+            50% { transform: scale(1) rotate(0deg); }
+            75% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        #end-screen.win .end-emoji {
+            font-size: 8rem;
+            animation: trophySpin 2s ease-in-out infinite;
+        }
+
+        #end-screen.win h2 {
+            font-size: 3.5rem;
+            color: #ffd700;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        #end-screen.win .win-subtitle {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffecb3;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        #end-screen.lose {
+            display: flex;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        #end-screen .end-emoji {
+            font-size: 6rem;
+            animation: bounceIn 0.6s ease;
+        }
+
+        #end-screen h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        #end-screen p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .play-again-btn {
+            margin-top: 15px;
+            padding: 16px 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Rubik', sans-serif;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+
+        /* Confetti */
+        .confetti-piece {
+            position: fixed;
+            z-index: 300;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            animation: confettiFall linear forwards;
+            pointer-events: none;
+        }
+
+        /* ======================== */
+        /*   ANIMATIONS             */
+        /* ======================== */
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        @keyframes jump {
+            0% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes waves {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(80px); }
+        }
+
+        @keyframes swim {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
+
+        @keyframes flashFeedback {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Sun */
+        .sun {
+            position: absolute;
+            top: 5%;
+            right: 10%;
+            font-size: 3.5rem;
+            z-index: 2;
+            animation: pulse 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Clouds */
+        .cloud {
+            position: absolute;
+            font-size: 2.5rem;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .cloud:nth-child(1) { top: 5%; left: 10%; animation: swim 6s ease-in-out infinite; }
+        .cloud:nth-child(2) { top: 12%; left: 55%; animation: swim 8s ease-in-out infinite reverse; }
+        .cloud:nth-child(3) { top: 3%; left: 35%; animation: swim 7s ease-in-out infinite; font-size: 1.8rem; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            #instruction-text { font-size: 1.5rem; }
+            #character { font-size: 3.5rem; }
+            .char-btn .emoji { font-size: 3.5rem; }
+            #select-screen h1 { font-size: 2rem; }
+            .zone-label { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- CHARACTER SELECT SCREEN -->
+<div id="select-screen">
+    <h1>🎮 המשחק של לורן בקל 🎮</h1>
+    <h2 style="font-size:1.8rem; font-weight:700; opacity:0.85; margin-top:-10px;">🌊 ים יבשה ויבשושה 🌿</h2>
+    <p>!בחר/י את הדמות שלך</p>
+    <div class="character-options">
+        <button class="char-btn" onclick="startGame('boy')">
+            <span class="emoji">👦</span>
+            <span>ילד</span>
+        </button>
+        <button class="char-btn" onclick="startGame('girl')">
+            <span class="emoji">👧</span>
+            <span>ילדה</span>
+        </button>
+        <button class="char-btn" onclick="startGame('dad')">
+            <span class="emoji">👨</span>
+            <span>אבא</span>
+        </button>
+        <button class="char-btn" onclick="startGame('mom')">
+            <span class="emoji">👩</span>
+            <span>אמא</span>
+        </button>
+    </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen">
+    <div id="instruction-bar">
+        <div class="info-badge">
+            <span class="label">שלב</span>
+            <span id="stage-display">1/10</span>
+        </div>
+        <div id="instruction-text"></div>
+        <div class="info-badge">
+            <span id="timer-display">10</span>
+            <span class="label">⏱</span>
+        </div>
+    </div>
+    <div id="timer-bar-container">
+        <div id="timer-bar"></div>
+    </div>
+
+    <div id="scene">
+        <!-- Clouds -->
+        <span class="cloud">☁️</span>
+        <span class="cloud">☁️</span>
+        <span class="cloud">⛅</span>
+        <span class="sun">☀️</span>
+
+        <div id="sea-zone" onclick="handleChoice('sea')"></div>
+        <div id="land-zone" onclick="handleChoice('land')"></div>
+        <div id="border-zone" onclick="handleChoice('yabshusha')"></div>
+        <div id="yabshusha-zone" onclick="handleChoice('yabshusha')"></div>
+
+        <span id="land-label" class="zone-label">🌿 יבשה</span>
+        <span id="sea-label" class="zone-label">🌊 ים</span>
+
+        <div id="character"></div>
+    </div>
+
+    <div id="feedback"></div>
+</div>
+
+<!-- END SCREEN -->
+<div id="end-screen">
+    <div class="end-emoji" id="end-emoji"></div>
+    <h2 id="end-title"></h2>
+    <p class="win-subtitle" id="end-subtitle"></p>
+    <p id="end-message"></p>
+    <button class="play-again-btn" onclick="resetGame()">🔄 שחק/י שוב</button>
+</div>
+
+<script>
+    // Game state
+    let gender = '';
+    let currentStage = 0;
+    const totalStages = 10;
+    let timerInterval = null;
+    let timeLeft = 0;
+    let currentCommand = '';
+    let canClick = false;
+
+    const commands = ['sea', 'land', 'yabshusha'];
+    const commandLabels = {
+        sea: '🌊 ים!',
+        land: '🌿 יבשה!',
+        yabshusha: '🏖️ יבשושה!'
+    };
+
+    function startGame(selectedGender) {
+        gender = selectedGender;
+        document.getElementById('select-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+
+        const charEl = document.getElementById('character');
+        const charMap = { boy: '🧒', girl: '👧', dad: '👨', mom: '👩' };
+        charEl.textContent = charMap[gender];
+
+        // Set instruction bar color based on gender
+        const isFemale = (gender === 'girl' || gender === 'mom');
+        const bar = document.getElementById('instruction-bar');
+        bar.style.background = isFemale
+            ? 'rgba(219, 112, 147, 0.85)'
+            : 'rgba(100, 149, 237, 0.85)';
+
+        // Place character in the center at the beach line
+        positionCharacter('center');
+        currentStage = 0;
+        nextStage();
+    }
+
+    function positionCharacter(position) {
+        const charEl = document.getElementById('character');
+        const sceneH = window.innerHeight;
+
+        charEl.classList.add('jump');
+        setTimeout(() => charEl.classList.remove('jump'), 400);
+
+        switch (position) {
+            case 'land':
+                charEl.style.left = '20%';
+                charEl.style.top = (sceneH * 0.45) + 'px';
+                charEl.style.transform = 'scaleX(1)';
+                break;
+            case 'sea':
+                charEl.style.left = '72%';
+                charEl.style.top = (sceneH * 0.45) + 'px';
+                charEl.style.transform = 'scaleX(-1)';
+                break;
+            case 'yabshusha':
+                charEl.style.left = 'calc(50% - 35px)';
+                charEl.style.top = (sceneH * 0.45) + 'px';
+                charEl.style.transform = 'scaleX(1)';
+                break;
+            case 'center':
+                charEl.style.left = 'calc(50% - 35px)';
+                charEl.style.top = (sceneH * 0.55) + 'px';
+                charEl.style.transform = 'scaleX(1)';
+                break;
+        }
+    }
+
+    function nextStage() {
+        currentStage++;
+        if (currentStage > totalStages) {
+            endGame(true);
+            return;
+        }
+
+        // Pick random command
+        currentCommand = commands[Math.floor(Math.random() * commands.length)];
+
+        // Update UI
+        document.getElementById('stage-display').textContent = `${currentStage}/${totalStages}`;
+        const instrEl = document.getElementById('instruction-text');
+        instrEl.textContent = commandLabels[currentCommand];
+        instrEl.style.animation = 'none';
+        instrEl.offsetHeight; // trigger reflow
+        instrEl.style.animation = 'pulse 0.5s ease';
+
+        // Timer: starts at 10, decreases by 1 each stage (minimum 2)
+        timeLeft = Math.max(2, 11 - currentStage);
+        const totalTime = timeLeft;
+        updateTimerDisplay(totalTime);
+
+        canClick = true;
+
+        // Start countdown
+        clearInterval(timerInterval);
+        const startTime = Date.now();
+        timerInterval = setInterval(() => {
+            const elapsed = (Date.now() - startTime) / 1000;
+            const remaining = totalTime - elapsed;
+
+            if (remaining <= 0) {
+                clearInterval(timerInterval);
+                canClick = false;
+                timeLeft = 0;
+                updateTimerDisplay(totalTime);
+                showFeedback(false);
+                setTimeout(() => endGame(false), 800);
+                return;
+            }
+
+            timeLeft = remaining;
+            updateTimerDisplay(totalTime);
+        }, 50);
+    }
+
+    function updateTimerDisplay(totalTime) {
+        const display = document.getElementById('timer-display');
+        const bar = document.getElementById('timer-bar');
+
+        display.textContent = Math.ceil(timeLeft);
+
+        if (timeLeft <= 3) {
+            display.classList.add('urgent');
+        } else {
+            display.classList.remove('urgent');
+        }
+
+        bar.style.width = ((timeLeft / totalTime) * 100) + '%';
+    }
+
+    function handleChoice(choice) {
+        if (!canClick) return;
+        canClick = false;
+        clearInterval(timerInterval);
+
+        const isCorrect = choice === currentCommand;
+
+        positionCharacter(choice);
+
+        showFeedback(isCorrect);
+
+        if (isCorrect) {
+            setTimeout(() => {
+                nextStage();
+            }, 900);
+        } else {
+            setTimeout(() => {
+                endGame(false);
+            }, 900);
+        }
+    }
+
+    function showFeedback(correct) {
+        const fb = document.getElementById('feedback');
+        fb.className = '';
+        fb.style.display = 'none';
+        fb.offsetHeight; // reflow
+
+        if (correct) {
+            fb.textContent = '✅';
+            fb.classList.add('correct');
+        } else {
+            fb.textContent = '❌';
+            fb.classList.add('wrong');
+        }
+
+        setTimeout(() => {
+            fb.style.display = 'none';
+            fb.className = '';
+        }, 700);
+    }
+
+    function endGame(won) {
+        clearInterval(timerInterval);
+        canClick = false;
+
+        const endScreen = document.getElementById('end-screen');
+        const charMap = { boy: '🧒', girl: '👧', dad: '👨', mom: '👩' };
+        const charEmoji = charMap[gender];
+
+        // Hide game, show end screen
+        document.getElementById('game-screen').style.display = 'none';
+
+        // Reset end screen classes
+        endScreen.classList.remove('win', 'lose');
+
+        const isFemale = (gender === 'girl' || gender === 'mom');
+        const isChild = (gender === 'girl' || gender === 'boy');
+        const championTitle = isFemale ? 'אלופה' : 'אלוף';
+        const wonText = isChild ? 'ניצחתי' : 'ניצחת';
+        const tryAgain = isFemale ? 'נסי שוב' : 'נסה שוב';
+
+        if (won) {
+            document.getElementById('end-emoji').textContent = '🏆';
+            document.getElementById('end-title').textContent = `🎉 ${wonText}! 🎉`;
+            document.getElementById('end-subtitle').textContent = `!כל הכבוד, ${championTitle}`;
+            document.getElementById('end-subtitle').style.display = 'block';
+            document.getElementById('end-message').textContent =
+                `${charEmoji} עברת את כל 10 השלבים בהצלחה! ${championTitle}!`;
+            endScreen.classList.add('win');
+            // Set win background color by gender
+            if (isFemale) {
+                endScreen.style.background = 'linear-gradient(135deg, #4a1942, #8e2d6d, #d4478d)';
+            } else {
+                endScreen.style.background = 'linear-gradient(135deg, #1a3a5c, #4a90d9, #87CEEB)';
+            }
+            endScreen.style.backgroundSize = '400% 400%';
+            spawnConfetti();
+        } else {
+            document.getElementById('end-emoji').textContent = '😢';
+            document.getElementById('end-title').textContent = '!אוי לא';
+            document.getElementById('end-subtitle').style.display = 'none';
+            document.getElementById('end-message').textContent =
+                `${charEmoji} הפסדת בשלב ${currentStage} מתוך ${totalStages}. ${tryAgain}!`;
+            endScreen.classList.add('lose');
+        }
+    }
+
+    function resetGame() {
+        const endScreen = document.getElementById('end-screen');
+        endScreen.classList.remove('win', 'lose');
+        endScreen.style.display = 'none';
+        endScreen.style.background = '';
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('select-screen').style.display = 'flex';
+
+        // Clean confetti
+        document.querySelectorAll('.confetti-piece').forEach(el => el.remove());
+
+        clearInterval(timerInterval);
+        currentStage = 0;
+    }
+
+    function spawnConfetti() {
+        const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6bff', '#ffaa5c'];
+        for (let i = 0; i < 80; i++) {
+            const piece = document.createElement('div');
+            piece.classList.add('confetti-piece');
+            piece.style.left = Math.random() * 100 + 'vw';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+            piece.style.animationDelay = (Math.random() * 2) + 's';
+            piece.style.width = (6 + Math.random() * 10) + 'px';
+            piece.style.height = (6 + Math.random() * 10) + 'px';
+            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            document.body.appendChild(piece);
+
+            setTimeout(() => piece.remove(), 6000);
+        }
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+        if (!canClick) return;
+        if (e.key === 'ArrowLeft' || e.key === 'a') handleChoice('sea');
+        else if (e.key === 'ArrowRight' || e.key === 'd') handleChoice('land');
+        else if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 's' || e.key === 'w') handleChoice('yabshusha');
+    });
+</script>
+
+</body>
+</html>
