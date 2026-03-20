@@ -33,7 +33,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f8a4c8 0%, #f472b6 30%, #87CEEB 70%, #60a5fa 100%);
             color: white;
             gap: 30px;
         }
@@ -41,13 +41,15 @@
         #select-screen h1 {
             font-size: 3rem;
             font-weight: 900;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.5);
             animation: bounceIn 0.8s ease;
         }
 
         #select-screen p {
             font-size: 1.4rem;
-            opacity: 0.9;
+            opacity: 1;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
         }
 
         .character-options {
@@ -61,9 +63,9 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.25);
             backdrop-filter: blur(10px);
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(255,255,255,0.5);
             border-radius: 24px;
             padding: 30px 50px;
             cursor: pointer;
@@ -71,7 +73,8 @@
             color: white;
             font-family: 'Rubik', sans-serif;
             font-size: 1.2rem;
-            font-weight: 600;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
 
         .char-btn:hover {
@@ -414,12 +417,13 @@
         #end-screen h2 {
             font-size: 3rem;
             font-weight: 900;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.5);
         }
 
         #end-screen p {
             font-size: 1.3rem;
-            opacity: 0.9;
+            opacity: 1;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
 
         .play-again-btn {
@@ -864,11 +868,12 @@
         const charMap = { boy: '🧒', girl: '👧', dad: '👨', mom: '👩' };
         const charEmoji = charMap[gender];
 
-        // Hide game, show end screen
+        // Hide game
         document.getElementById('game-screen').style.display = 'none';
 
-        // Reset end screen classes
+        // Reset end screen
         endScreen.classList.remove('win', 'lose');
+        endScreen.style.background = '';
 
         const isFemale = (gender === 'girl' || gender === 'mom');
         const isChild = (gender === 'girl' || gender === 'boy');
@@ -887,13 +892,11 @@
             document.getElementById('end-message').textContent =
                 `${charEmoji} עברת את כל 10 השלבים בהצלחה! ${championTitle}!`;
             endScreen.classList.add('win');
-            // Set win background color by gender
             if (isFemale) {
                 endScreen.style.background = 'linear-gradient(135deg, #4a1942, #8e2d6d, #d4478d)';
             } else {
                 endScreen.style.background = 'linear-gradient(135deg, #1a3a5c, #4a90d9, #87CEEB)';
             }
-            endScreen.style.backgroundSize = '400% 400%';
             spawnConfetti();
         } else {
             document.getElementById('end-emoji').textContent = '😢';
@@ -905,6 +908,9 @@
             endScreen.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
             endScreen.classList.add('lose');
         }
+
+        // Always force display flex (inline style overrides CSS)
+        endScreen.style.display = 'flex';
     }
 
     function resetGame() {
