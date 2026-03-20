@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>המשחק של לורן בקל - ים יבשה ויבשושה</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;900&display=swap');
@@ -20,6 +20,8 @@
             width: 100vw;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* ======================== */
@@ -519,11 +521,85 @@
 
         /* Responsive */
         @media (max-width: 600px) {
-            #instruction-text { font-size: 1.5rem; }
-            #character { font-size: 3.5rem; }
-            .char-btn .emoji { font-size: 3.5rem; }
-            #select-screen h1 { font-size: 2rem; }
-            .zone-label { font-size: 1.2rem; }
+            /* Select screen */
+            #select-screen { gap: 15px; padding: 20px; }
+            #select-screen h1 { font-size: 1.6rem; }
+            #select-screen h2 { font-size: 1.1rem !important; }
+            #select-screen p { font-size: 1rem; }
+
+            .character-options {
+                flex-wrap: wrap;
+                gap: 12px;
+                justify-content: center;
+            }
+
+            .char-btn {
+                padding: 15px 25px;
+                gap: 8px;
+                border-radius: 16px;
+                font-size: 1rem;
+            }
+
+            .char-btn .emoji { font-size: 2.8rem; }
+
+            /* Game screen */
+            #instruction-bar {
+                padding: 8px 10px;
+                gap: 10px;
+                flex-wrap: nowrap;
+            }
+
+            #instruction-text { font-size: 1.4rem; }
+
+            .info-badge {
+                padding: 4px 8px;
+                font-size: 0.8rem;
+                border-radius: 8px;
+            }
+
+            .info-badge .label { font-size: 0.7rem; }
+
+            #timer-display { font-size: 1.2rem; min-width: 28px; }
+
+            #timer-bar-container { top: 48px; height: 4px; }
+
+            #character { font-size: 3rem; }
+
+            .zone-label { font-size: 1.1rem; bottom: 8%; }
+
+            #land-label { left: 10%; }
+            #sea-label { right: 8%; }
+
+            .sun { font-size: 2.2rem; top: 3%; }
+            .cloud { font-size: 1.6rem; }
+
+            #land-zone::before { font-size: 2rem; }
+            #land-zone::after { font-size: 1.2rem; }
+            #sea-zone::after { font-size: 1.4rem; }
+
+            /* End screen */
+            #end-screen { gap: 15px; padding: 20px; }
+            #end-screen .end-emoji { font-size: 4.5rem; }
+            #end-screen h2 { font-size: 1.8rem; }
+            #end-screen p { font-size: 1rem; }
+            #end-screen .win-subtitle { font-size: 1.3rem !important; }
+
+            .play-again-btn {
+                padding: 12px 35px;
+                font-size: 1.1rem;
+                border-radius: 12px;
+            }
+
+            #end-screen.win::before { font-size: 2.5rem; top: 5%; }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            #select-screen h1 { font-size: 1.3rem; }
+            .char-btn { padding: 12px 18px; }
+            .char-btn .emoji { font-size: 2.2rem; }
+            #instruction-text { font-size: 1.1rem; }
+            #character { font-size: 2.5rem; }
         }
     </style>
 </head>
