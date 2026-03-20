@@ -338,32 +338,34 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            gap: 25px;
+            gap: 15px;
             color: white;
             text-align: center;
             padding: 20px;
+            position: relative;
         }
 
         #end-screen.win {
             display: flex;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            background-size: 400% 400%;
-            animation: gradientShift 4s ease infinite;
             overflow: hidden;
         }
 
-        #end-screen.win::before {
-            content: '✨🏆✨';
-            position: absolute;
-            top: 8%;
-            font-size: 4rem;
-            animation: pulse 2s ease-in-out infinite;
+        #end-screen.win .end-emoji {
+            font-size: 6rem;
+            animation: trophySpin 2s ease-in-out infinite;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        #end-screen.win h2 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        #end-screen.win .win-subtitle {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffecb3;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
         @keyframes glow {
@@ -377,24 +379,6 @@
             50% { transform: scale(1) rotate(0deg); }
             75% { transform: scale(1.2) rotate(10deg); }
             100% { transform: scale(1) rotate(0deg); }
-        }
-
-        #end-screen.win .end-emoji {
-            font-size: 8rem;
-            animation: trophySpin 2s ease-in-out infinite;
-        }
-
-        #end-screen.win h2 {
-            font-size: 3.5rem;
-            color: #ffd700;
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        #end-screen.win .win-subtitle {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #ffecb3;
-            animation: pulse 1.5s ease-in-out infinite;
         }
 
         #end-screen.lose {
@@ -578,11 +562,13 @@
             #sea-zone::after { font-size: 1.4rem; }
 
             /* End screen */
-            #end-screen { gap: 15px; padding: 20px; }
-            #end-screen .end-emoji { font-size: 4.5rem; }
+            #end-screen { gap: 12px; padding: 20px; }
+            #end-screen .end-emoji { font-size: 4rem; }
+            #end-screen.win .end-emoji { font-size: 4.5rem; }
             #end-screen h2 { font-size: 1.8rem; }
+            #end-screen.win h2 { font-size: 2rem; }
             #end-screen p { font-size: 1rem; }
-            #end-screen .win-subtitle { font-size: 1.3rem !important; }
+            #end-screen .win-subtitle { font-size: 1.2rem !important; }
 
             .play-again-btn {
                 padding: 12px 35px;
@@ -590,7 +576,6 @@
                 border-radius: 12px;
             }
 
-            #end-screen.win::before { font-size: 2.5rem; top: 5%; }
         }
 
         /* Extra small phones */
